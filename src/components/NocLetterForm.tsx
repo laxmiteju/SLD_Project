@@ -255,7 +255,7 @@ function NocFormInner({ mode, flatId, nocId }: Props) {
         <div id="printable-sheet" className="text-[13px] leading-relaxed">
 
           {/* LETTER 1: Allotment of Car Parking */}
-          <div className="page-sheet bg-white shadow-md mx-auto mb-10 p-8 sm:p-12 print:shadow-none print:mb-0 print:p-0 max-w-[800px]">
+          <div className="page-sheet bg-white shadow-md mx-auto mb-10 p-8 sm:p-12 print:shadow-none print:mb-0 print:px-0 print:pb-0 print:pt-[20mm] max-w-[800px]">
           <p className="text-right text-sm underline mb-3">Customer Copy</p>
           <h2 className="text-center font-bold underline mb-2">LETTER OF ALLOTMENT OF CAR PARKING</h2>
           <p className="text-right mb-4">Date: {form.noc_date}</p>
@@ -304,7 +304,7 @@ function NocFormInner({ mode, flatId, nocId }: Props) {
           </div>
 
           {/* LETTER 2: Delivery of Possession */}
-          <div className="page-sheet bg-white shadow-md mx-auto mb-10 p-8 sm:p-12 print:shadow-none print:mb-0 print:p-0 max-w-[800px] print:break-before-page">
+          <div className="page-sheet bg-white shadow-md mx-auto mb-10 p-8 sm:p-12 print:shadow-none print:mb-0 print:px-0 print:pb-0 print:pt-[20mm] max-w-[800px] print:break-before-page">
             <p className="text-right text-sm underline mb-3">Customer Copy</p>
             <h2 className="text-center font-bold underline mb-4">LETTER OF DELIVERY OF POSSESSION</h2>
             <div className="flex justify-between mb-4">
@@ -335,7 +335,7 @@ function NocFormInner({ mode, flatId, nocId }: Props) {
             <p className="mb-3">
               Your said flat has been allotted the {form.parking_type} in the {form.parking_location} and you shall park your vehicle at the designated parking area only.
             </p>
-            {form.possession_rules.split('\n\n').map((para: string, i: number) => (
+            {form.possession_rules.split('\n\n').map((para, i) => (
               <p key={i} className="mb-3">{para}</p>
             ))}
             <p className="mb-3">
@@ -343,7 +343,7 @@ function NocFormInner({ mode, flatId, nocId }: Props) {
               GST {project.gst_percent}% Extra on total Maintenance Value and Corpus fund Rs. {project.corpus_fund_rate}/- per sft from the date of Handing over
               in advance in respect of your flat to the company (i.e., project Developers).
             </p>
-            {CLOSING_PARAGRAPHS.split('\n\n').map((para: string, i: number) => (
+            {CLOSING_PARAGRAPHS.split('\n\n').map((para, i) => (
               <p key={i} className="mb-3">{para}</p>
             ))}
             <p>Thanking you,</p>
@@ -366,7 +366,7 @@ function NocFormInner({ mode, flatId, nocId }: Props) {
           </div>
 
           {/* LETTER 3: Receipt */}
-          <div className="page-sheet bg-white shadow-md mx-auto mb-10 p-8 sm:p-12 print:shadow-none print:mb-0 print:p-0 max-w-[800px] print:break-before-page">
+          <div className="page-sheet bg-white shadow-md mx-auto mb-10 p-8 sm:p-12 print:shadow-none print:mb-0 print:px-0 print:pb-0 print:pt-[20mm] max-w-[800px] print:break-before-page">
             <h2 className="text-center font-bold underline mb-6 text-lg">RECEIPT</h2>
             <p className="text-right mb-4">DATE: {form.noc_date}</p>
             <p className="mb-4">
@@ -420,7 +420,7 @@ function NocFormInner({ mode, flatId, nocId }: Props) {
         <style jsx global>{`
           @media print {
             .no-print { display: none !important; }
-            @page { size: A4; margin: 18mm 18mm 14mm 18mm; }
+            @page { size: A4; margin: 20mm 18mm 14mm 18mm; }
             input, textarea { color: #000 !important; }
           }
         `}</style>

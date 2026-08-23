@@ -276,7 +276,7 @@ function CostSheetFormInner({ mode, flatId, costSheetId }: Props) {
         </table>
 
         {/* Cost table */}
-        <table className="w-full border-collapse border-t-2 border-gray-800" style={{ tableLayout: 'fixed' }}>
+        <table className="cost-table w-full border-collapse border-t-2 border-gray-800" style={{ tableLayout: 'fixed' }}>
           <colgroup>
             <col style={{ width: '5%' }} />
             <col style={{ width: '25%' }} />
@@ -328,7 +328,8 @@ function CostSheetFormInner({ mode, flatId, costSheetId }: Props) {
                       <input disabled={isFrozen} value={item.label}
                         onChange={(e) => updateItem(item.id, { label: e.target.value })}
                         placeholder="Line item label"
-                        className="border-0 w-full focus:outline-none bg-transparent" />
+                        className="border-0 w-full focus:outline-none bg-transparent no-print" />
+                      <div className="hidden print:block">{item.label}</div>
                     </td>
                     <td className="border border-gray-400 px-1 py-1 align-top overflow-hidden text-right">
                       <div className="flex items-center justify-end gap-0.5 flex-nowrap no-print">
@@ -365,7 +366,7 @@ function CostSheetFormInner({ mode, flatId, costSheetId }: Props) {
                       <div className="flex items-center justify-between gap-1">
                         <input disabled={isFrozen} value={item.notes} placeholder="Notes / basis"
                           onChange={(e) => updateItem(item.id, { notes: e.target.value })}
-                          className={notesBox} />
+                          className={notesBox + ' no-print'} />
                         {!isFrozen && (
                           <div className="flex gap-1 text-xs shrink-0 no-print">
                             <button onClick={() => moveItem(item.id, -1)} disabled={idx === 0} className="disabled:opacity-30" title="Move up">↑</button>
@@ -374,6 +375,7 @@ function CostSheetFormInner({ mode, flatId, costSheetId }: Props) {
                           </div>
                         )}
                       </div>
+                      <div className="hidden print:block">{item.notes}</div>
                     </td>
                   </tr>
                   {!isFrozen && (
@@ -497,13 +499,16 @@ function CostSheetFormInner({ mode, flatId, costSheetId }: Props) {
       <style jsx global>{`
         @media print {
           .no-print { display: none !important; }
-          #printable-sheet { border: none !important; }
           @page { size: A4; margin: 12mm; }
           input, textarea, select { color: #000 !important; }
+          table { table-layout: fixed !important; width: 100% !important; }
+          .cost-table { border-collapse: collapse !important; }
+          .cost-table td, .cost-table th { overflow: visible !important; word-break: break-word !important; border: 1px solid #6b7280 !important; }
           input[type="number"] {
-            width: auto !important;
-            min-width: 1ch;
-            max-width: none !important;
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
             -moz-appearance: textfield;
           }
           input[type="number"]::-webkit-inner-spin-button,

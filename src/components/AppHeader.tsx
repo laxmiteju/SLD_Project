@@ -12,7 +12,7 @@ export default function AppHeader() {
   }
 
   return (
-    <div className="bg-[#0F2444] text-white">
+    <div className="bg-[#0F2444] text-white no-print">
       <div className="w-full px-4 sm:px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="bg-white rounded-md p-1.5 flex items-center justify-center">
