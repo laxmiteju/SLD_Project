@@ -12,6 +12,7 @@ import {
   newChargeItem,
   defaultChargeItems,
 } from '@/lib/utils';
+import { useAuth, RequireAuth } from '@/lib/auth-context';
 
 interface Props {
   mode: 'new' | 'existing';
@@ -32,7 +33,8 @@ interface FormState {
   status: 'draft' | 'final';
 }
 
-export default function CostSheetForm({ mode, flatId, costSheetId }: Props) {
+function CostSheetFormInner({ mode, flatId, costSheetId }: Props) {
+  const { role } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -190,6 +192,22 @@ export default function CostSheetForm({ mode, flatId, costSheetId }: Props) {
     setSaving(false);
   }
 
+  async function handleDelete() {
+    if (!sheetId || !form) return;
+    const confirmMsg =
+      form.status === 'final'
+        ? 'This is a FINALIZED cost sheet. Delete it permanently? This cannot be undone.'
+        : 'Delete this draft cost sheet? This cannot be undone.';
+    if (!confirm(confirmMsg)) return;
+
+    const { error } = await supabase.from('cost_sheets').delete().eq('id', sheetId);
+    if (error) {
+      alert('Could not delete: ' + error.message + (form.status === 'final' ? ' (only admins can delete finalized sheets)' : ''));
+      return;
+    }
+    router.push('/cost-sheets/history');
+  }
+
   if (loading) return <div className="p-8 text-gray-500">Loading...</div>;
   if (!flat || !project || !form || !totals) return <div className="p-8 text-red-600">Could not load data.</div>;
 
@@ -244,10 +262,11 @@ export default function CostSheetForm({ mode, flatId, costSheetId }: Props) {
                 placeholder="Enter customer name"
                 className="border-0 w-full focus:outline-none bg-transparent" />
             </DRow>
-            <DRow label="Flat No:">{flat.block}-{flat.flat_no}</DRow>
+            <DRow label="Flat No:">{flat.block ? `${flat.block}-${flat.flat_no}` : flat.flat_no}</DRow>
             <DRow label="Floor:">{flat.floor}</DRow>
             <DRow label="Facing:">{flat.facing}</DRow>
             <DRow label="Super Built-up Area (Sq.ft):">{form.sba_sqft}</DRow>
+            <DRow label="Undivided Land Share (Sq.yd):">{flat.undivided_land_share_sqyd ?? '-'}</DRow>
             <DRow label="Government Value (₹ / Sq.ft):">
               <input type="number" disabled={isFrozen} value={form.govt_value_per_sqft}
                 onChange={(e) => update('govt_value_per_sqft', Number(e.target.value))}
@@ -457,6 +476,21 @@ export default function CostSheetForm({ mode, flatId, costSheetId }: Props) {
             className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 text-sm">
             {saving ? 'Saving...' : 'Freeze Cost Sheet'}
           </button>
+          {sheetId && (
+            <button onClick={handleDelete}
+              className="border border-red-300 text-red-600 bg-white px-4 py-2 rounded-md hover:bg-red-50 text-sm ml-auto">
+              Delete
+            </button>
+          )}
+        </div>
+      )}
+
+      {isFrozen && role === 'admin' && (
+        <div className="flex mt-4 no-print">
+          <button onClick={handleDelete}
+            className="border border-red-300 text-red-600 bg-white px-4 py-2 rounded-md hover:bg-red-50 text-sm ml-auto">
+            Delete (admin)
+          </button>
         </div>
       )}
 
@@ -485,6 +519,14 @@ export default function CostSheetForm({ mode, flatId, costSheetId }: Props) {
         }
       `}</style>
     </div>
+  );
+}
+
+export default function CostSheetForm(props: Props) {
+  return (
+    <RequireAuth>
+      <CostSheetFormInner {...props} />
+    </RequireAuth>
   );
 }
 
