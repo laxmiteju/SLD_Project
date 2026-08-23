@@ -335,7 +335,7 @@ function NocFormInner({ mode, flatId, nocId }: Props) {
             <p className="mb-3">
               Your said flat has been allotted the {form.parking_type} in the {form.parking_location} and you shall park your vehicle at the designated parking area only.
             </p>
-            {form.possession_rules.split('\n\n').map((para, i) => (
+            {form.possession_rules.split('\n\n').map((para: string, i: number) => (
               <p key={i} className="mb-3">{para}</p>
             ))}
             <p className="mb-3">
@@ -343,7 +343,7 @@ function NocFormInner({ mode, flatId, nocId }: Props) {
               GST {project.gst_percent}% Extra on total Maintenance Value and Corpus fund Rs. {project.corpus_fund_rate}/- per sft from the date of Handing over
               in advance in respect of your flat to the company (i.e., project Developers).
             </p>
-            {CLOSING_PARAGRAPHS.split('\n\n').map((para, i) => (
+            {CLOSING_PARAGRAPHS.split('\n\n').map((para: string, i: number) => (
               <p key={i} className="mb-3">{para}</p>
             ))}
             <p>Thanking you,</p>

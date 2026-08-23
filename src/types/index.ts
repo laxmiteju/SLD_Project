@@ -59,3 +59,36 @@ export interface CostSheet {
   created_at: string;
   updated_at: string;
 }
+export interface NocLetter {
+  id: string;
+  flat_id: string;
+  project_id: string;
+  customer_name: string | null;
+  flat_no: string;
+  block: string | null;
+  floor: string | null;
+  sba_sqft: number;
+  uds_sqyd: number | null;
+  noc_date: string;
+  parking_type: string;
+  parking_location: string;
+  corpus_fund_amount: number;
+  corpus_payment_mode: string;
+  corpus_cheque_number: string | null;
+  corpus_received_date: string | null;
+  maintenance_amount: number;
+  maintenance_payment_mode: string;
+  maintenance_paid_to: string | null;
+  maintenance_reference_number: string | null;
+  maintenance_paid_date: string | null;
+  keys_given: number;
+  survey_numbers: string;
+  village_details: string;
+  short_location: string;
+  corpus_paid_to: string | null;
+  project_description: string;
+  possession_rules: string;
+  status: 'draft' | 'final';
+  created_at: string;
+  updated_at: string;
+}
