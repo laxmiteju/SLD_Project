@@ -25,8 +25,17 @@ export default function AppHeader() {
         </div>
 
         <div className="flex items-center gap-5 text-sm">
+          <Link href="/cost-sheets" className="text-blue-200 hover:text-white hover:underline">
+            Cost Sheets
+          </Link>
+          <Link href="/noc" className="text-blue-200 hover:text-white hover:underline">
+            NOC
+          </Link>
           <Link href="/cost-sheets/history" className="text-blue-200 hover:text-white hover:underline">
-            Previous Sheets →
+            Previous Cost Sheets →
+          </Link>
+          <Link href="/noc/history" className="text-blue-200 hover:text-white hover:underline">
+            Previous NOCs →
           </Link>
           <button
             onClick={handleSignOut}
