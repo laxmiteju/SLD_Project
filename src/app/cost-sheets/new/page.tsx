@@ -1,9 +1,10 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import CostSheetForm from '@/components/CostSheetForm';
 
-export default function NewCostSheetPage() {
+function NewCostSheetContent() {
   const searchParams = useSearchParams();
   const flatId = searchParams.get('flat_id');
 
@@ -12,4 +13,12 @@ export default function NewCostSheetPage() {
   }
 
   return <CostSheetForm mode="new" flatId={flatId} />;
+}
+
+export default function NewCostSheetPage() {
+  return (
+    <Suspense fallback={<div className="p-8">Loading...</div>}>
+      <NewCostSheetContent />
+    </Suspense>
+  );
 }
