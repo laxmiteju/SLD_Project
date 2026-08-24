@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, Fragment } from 'react';
+import { useEffect, useState, useRef, Fragment } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { supabase } from '@/lib/supabase';
@@ -31,9 +31,37 @@ function newItem(label = ''): LineItem {
   return { id: crypto.randomUUID(), label, amount: 0 };
 }
 
-function autoGrow(e: React.FormEvent<HTMLTextAreaElement>) {
-  e.currentTarget.style.height = 'auto';
-  e.currentTarget.style.height = e.currentTarget.scrollHeight + 'px';
+// Textarea that resizes to fit its content automatically — on every render
+// (including initial load and print), not just while the user is typing.
+function AutoGrowTextarea({
+  value, onChange, disabled, placeholder, className,
+}: {
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  disabled?: boolean;
+  placeholder?: string;
+  className?: string;
+}) {
+  const ref = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.style.height = 'auto';
+      ref.current.style.height = ref.current.scrollHeight + 'px';
+    }
+  }, [value]);
+
+  return (
+    <textarea
+      ref={ref}
+      rows={1}
+      value={value}
+      onChange={onChange}
+      disabled={disabled}
+      placeholder={placeholder}
+      className={className}
+    />
+  );
 }
 
 function PaymentTrackerFormInner({ mode, flatId, trackerId }: Props) {
@@ -217,32 +245,32 @@ function PaymentTrackerFormInner({ mode, flatId, trackerId }: Props) {
           </div>
         </div>
 
-        <div id="printable-sheet" className="page-sheet bg-white shadow-md mx-auto p-8 sm:p-12 print:shadow-none print:p-0 max-w-[800px] text-[13px] leading-relaxed">
-          <div className="flex items-center justify-center gap-3 mb-4">
+        <div id="printable-sheet" className="page-sheet bg-white shadow-md mx-auto print:shadow-none max-w-[800px] text-[13px] leading-relaxed border-2 border-gray-800">
+          <div className="flex items-center gap-3 border-b-2 border-gray-800 p-4">
             <Image src="/sld-logo.png" alt="Sree Laxmi Developers" width={44} height={42} />
-            <h2 className="text-center font-bold text-lg">SREE LAXMI DEVELOPERS</h2>
+            <h2 className="text-lg font-bold tracking-wide flex-1 text-center -ml-11">SREE LAXMI DEVELOPERS</h2>
           </div>
 
-          <div className="flex justify-between mb-1">
-            <p><span className="font-semibold">Project :</span> {project.name}</p>
-            <p className="flex items-center gap-1">
-              <span className="font-semibold">Date :</span>
-              <input type="date" disabled={isLocked} value={form.tracker_date}
-                onChange={(e) => update('tracker_date', e.target.value)}
-                className="border-0 no-print-border focus:outline-none bg-transparent disabled:bg-transparent" />
-            </p>
-          </div>
-          <p className="mb-1">
-            <span className="font-semibold">Subject :</span>{' '}
-            <input disabled={isLocked} value={form.subject_note} onChange={(e) => update('subject_note', e.target.value)}
-              className="border-0 focus:outline-none bg-transparent disabled:bg-transparent w-2/3" />
-          </p>
-          <p className="mb-4">
-            <span className="font-semibold">Customer Name :</span>{' '}
-            <input disabled={isLocked} value={form.customer_name} placeholder="Enter customer name"
-              onChange={(e) => update('customer_name', e.target.value)}
-              className="border-0 focus:outline-none bg-transparent disabled:bg-transparent w-1/2" />
-          </p>
+          <div className="p-8 sm:p-12 pt-4 sm:pt-4">
+          <table className="w-full border-collapse mb-4">
+            <tbody>
+              <DRow label="Project:">{project.name}</DRow>
+              <DRow label="Date:">
+                <input type="date" disabled={isLocked} value={form.tracker_date}
+                  onChange={(e) => update('tracker_date', e.target.value)}
+                  className="border-0 focus:outline-none bg-transparent disabled:bg-transparent" />
+              </DRow>
+              <DRow label="Subject:">
+                <input disabled={isLocked} value={form.subject_note} onChange={(e) => update('subject_note', e.target.value)}
+                  className="border-0 w-full focus:outline-none bg-transparent disabled:bg-transparent" />
+              </DRow>
+              <DRow label="Customer Name:">
+                <input disabled={isLocked} value={form.customer_name} placeholder="Enter customer name"
+                  onChange={(e) => update('customer_name', e.target.value)}
+                  className="border-0 w-full focus:outline-none bg-transparent disabled:bg-transparent" />
+              </DRow>
+            </tbody>
+          </table>
 
           {/* Flat Cost Details + Payable Adjustments — one continuous table, like the source doc */}
           <CombinedFlatCostTable
@@ -290,6 +318,7 @@ function PaymentTrackerFormInner({ mode, flatId, trackerId }: Props) {
               className="border-0 focus:outline-none bg-transparent disabled:bg-transparent w-full resize-none"
               placeholder="e.g. cutting charge formula, exceptions, etc."
             />
+          </div>
           </div>
         </div>
 
@@ -369,9 +398,8 @@ function CombinedRow({
       <tr>
         <td className="border border-gray-500 px-2 py-1 text-center w-10">{hideSerial ? '' : idx + 1}</td>
         <td className="border border-gray-500 px-2 py-1">
-          <textarea disabled={locked} value={item.label} placeholder="Description" rows={1}
+          <AutoGrowTextarea disabled={locked} value={item.label} placeholder="Description"
             onChange={(e) => h.updateItem(item.id, { label: e.target.value })}
-            onInput={autoGrow}
             className="border-0 w-full focus:outline-none bg-transparent disabled:bg-transparent resize-none overflow-hidden leading-snug" />
         </td>
         <td className="border border-gray-500 px-2 py-1 text-right w-28">
@@ -533,9 +561,8 @@ function LineItemsSection({
             <tr>
               <td className="border border-gray-500 px-2 py-1 text-center">{hideSerial ? '' : idx + 1}</td>
               <td className="border border-gray-500 px-2 py-1">
-                <textarea disabled={locked} value={item.label} placeholder="Description" rows={1}
+                <AutoGrowTextarea disabled={locked} value={item.label} placeholder="Description"
                   onChange={(e) => updateItem(item.id, { label: e.target.value })}
-                  onInput={autoGrow}
                   className="border-0 w-full focus:outline-none bg-transparent disabled:bg-transparent resize-none overflow-hidden leading-snug" />
               </td>
               <td className="border border-gray-500 px-2 py-1 text-right">
@@ -579,5 +606,14 @@ export default function PaymentTrackerForm(props: Props) {
     <RequireAuth>
       <PaymentTrackerFormInner {...props} />
     </RequireAuth>
+  );
+}
+
+function DRow({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <tr className="border-t border-gray-300">
+      <td className="px-2 py-1 font-medium w-1/3">{label}</td>
+      <td className="px-2 py-1">{children}</td>
+    </tr>
   );
 }
