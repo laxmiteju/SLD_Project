@@ -2,6 +2,7 @@
 
 import { useEffect, useState, Fragment } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { supabase } from '@/lib/supabase';
 import type { LineItem, PaymentTracker, Flat, Project, CostSheet } from '@/types';
 import { formatCurrency, calculateCostSheet } from '@/lib/utils';
@@ -217,7 +218,10 @@ function PaymentTrackerFormInner({ mode, flatId, trackerId }: Props) {
         </div>
 
         <div id="printable-sheet" className="page-sheet bg-white shadow-md mx-auto p-8 sm:p-12 print:shadow-none print:p-0 max-w-[800px] text-[13px] leading-relaxed">
-          <h2 className="text-center font-bold text-lg mb-4">SREE LAXMI DEVELOPERS</h2>
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <Image src="/sld-logo.png" alt="Sree Laxmi Developers" width={44} height={42} />
+            <h2 className="text-center font-bold text-lg">SREE LAXMI DEVELOPERS</h2>
+          </div>
 
           <div className="flex justify-between mb-1">
             <p><span className="font-semibold">Project :</span> {project.name}</p>
