@@ -92,3 +92,49 @@ export interface NocLetter {
   created_at: string;
   updated_at: string;
 }
+export interface LineItem {
+  id: string;
+  label: string;
+  amount: number;
+}
+
+export interface PaymentTracker {
+  id: string;
+  flat_id: string;
+  project_id: string;
+  cost_sheet_id: string | null;
+  customer_name: string | null;
+  subject_note: string;
+  tracker_date: string;
+  flat_cost_items: LineItem[];
+  payable_adjustments: LineItem[];
+  payments_received: LineItem[];
+  cash_payments: LineItem[];
+  cash_payments_note: string;
+  status: 'active' | 'completed';
+  created_at: string;
+  updated_at: string;
+}
+export interface LineItem {
+  id: string;
+  label: string;
+  amount: number;
+}
+
+export interface PaymentTracker {
+  id: string;
+  flat_id: string;
+  project_id: string;
+  cost_sheet_id: string | null;
+  customer_name: string | null;
+  subject_note: string;
+  tracker_date: string;
+  flat_cost_items: LineItem[];
+  payable_adjustments: LineItem[];
+  payments_received: LineItem[];
+  cash_payments: LineItem[];
+  cash_payments_note: string;
+  status: 'active' | 'completed';
+  created_at: string;
+  updated_at: string;
+}
